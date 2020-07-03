@@ -1,0 +1,34 @@
+# Model
+train.model='CheXNet'
+CheXNet.out_size=14
+
+# Train configuration
+train.batch_size=16
+train.lr=1e-4
+train.n_epochs=100
+train.optimizer='adam'
+train.callbacks=['EvaluateEpoch', 'meta_saver', 'CompletedStopping', 'EarlyStopping']
+CompletedStopping.patience=5
+CompletedStopping.monitor='auc_chexnet_covid'
+EarlyStopping.patience=20
+EarlyStopping.monitor='val_auc_chexnet_covid'
+EarlyStopping.mode='max'
+EvaluateEpoch.metrics=['acc_chexnet_covid', 'auc_chexnet_covid']
+ProgressionCallback.other_metrics=['acc_chexnet_covid']
+
+# Training loop
+training_loop.reload=False
+training_loop.use_gpu=True
+training_loop.device_numbers=[0]
+training_loop.checkpoint_monitor='val_auc_chexnet_covid'
+
+# Dataset
+get_chexnet_covid.seed=777 # Use different seed for different instance of CV
+get_chexnet_covid.data_dir="/gpfs/data/luilab/covid/NIH/images"
+get_chexnet_covid.train_image_list_file="/gpfs/data/luilab/covid/NIH/labels/train_list.txt"
+get_chexnet_covid.val_image_list_file="/gpfs/data/luilab/covid/NIH/labels/val_list.txt"
+get_chexnet_covid.test_image_list_file="/gpfs/data/luilab/covid/NIH/labels/test_list.txt"
+get_chexnet_covid.num_workers=10
+get_chexnet_covid.train=True
+get_chexnet_covid.valid=True
+get_chexnet_covid.test=True
