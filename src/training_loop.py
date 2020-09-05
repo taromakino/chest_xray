@@ -254,7 +254,7 @@ def _reload(model, optimizer, save_path, callbacks):
     logger.warning("Reloading weights!")
     checkpoint = torch.load(model_last_epoch_path)
     model.load_state_dict(checkpoint['model'])
-    #optimizer.load_state_dict(checkpoint['optimizer'])
+    optimizer.load_state_dict(checkpoint['optimizer'])
     logger.info("Reloading loop state!")
     loop_state = pickle.load(open(loop_state_path, 'rb'))
     logger.info("Reloading history!")
