@@ -6,6 +6,8 @@ from .simple_cnn_fmnist import QuarterCNN, JointQuarterCNN
 from .resnet_fmnist import QuarterResnet, JointQuarterResnet, JointQuarterResnet_Shared, BlendQuarterResnet
 from .chexnet import CheXNet
 from .classifier import Classifier
+from .gmic import GMIC
+from .gmic_globalnet import GMIC
 #comment out while using local machine  
 # from .breast import (AllViewModel, SingleViewModel, EnsembleModel,
 # BlendedModel, SmallerSingleViewModel,
