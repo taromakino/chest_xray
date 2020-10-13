@@ -126,6 +126,7 @@ class GMIC(nn.Module):
         # note that y_global is not directly used in inference
         self.y_global = self.aggregation_function.forward(self.saliency_map)
 
+
         # region proposal network
         small_x_locations = self.retrieve_roi_crops.forward(x_original, self.cam_size, self.saliency_map)
 
@@ -155,4 +156,4 @@ class GMIC(nn.Module):
         #torch.sigmoid(self.fusion_dnn(concat_vec))
 
         #return self.y_fusion
-        return F.softmax(self.global_dnn(global_vec), dim=1)
+        return self.y_global
