@@ -4,8 +4,8 @@
 
 # Train configuration
 train.batch_size=16
-train.lr= 0.00005# 0.00004 #0.00002 #1e-5  #0.00002  #1e-4
-train.n_epochs=100
+train.lr= 1e-4
+train.n_epochs=200
 train.optimizer='adam'
 train.callbacks=['EvaluateEpoch', 'meta_saver', 'CompletedStopping', 'EarlyStopping']
 CompletedStopping.patience=5
@@ -31,7 +31,7 @@ get_chexnet_covid.test_image_list_file="/content/gdrive/My Drive/chestxray/chest
 get_chexnet_covid.num_workers=2
 get_chexnet_covid.train=True
 get_chexnet_covid.valid=True
-get_chexnet_covid.test=True
+get_chexnet_covid.test=False
 
 
 # Model
