@@ -31,13 +31,9 @@ import tqdm
 import cv2
 import matplotlib.cm as cm
 from src.utilities import pickling, tools
-
-from src.models import gmic as gmic
-from src import models
+from src.models import gmic_globalnet as gmic
+from src import modelling
 from src.data_loading import loading
-
-
-
 
 
 def visualize_example(input_img, saliency_maps, 
@@ -284,7 +280,7 @@ def run_model(model, parameters,data_path
             patch_attentions = model.patch_attns[0, :].data.cpu().numpy()
             
             # create directories
-            output_path = './chestnet_results/sample0.2_images'
+            output_path = "/content/gdrive/My Drive/chestxray/chestnet_results/sample_images_final_0.1_final/"
             os.makedirs(output_path, exist_ok=True)
             os.makedirs(os.path.join(output_path, "visualization"), exist_ok=True)
             short_file_path = image.split('.')[0]
@@ -302,6 +298,7 @@ def run_single_model(model_path, data_path, parameters):
     """
     
     # construct model
+    #set_seed()
     model = gmic.GMIC(parameters)
     # load parameters
     if parameters["device_type"] == "gpu":
@@ -323,19 +320,19 @@ if __name__ == '__main__':
    
 
 
-    model_path = "/home/aims/Documents/Personal_ machine_ learning/Kaggle_chestxray_data/chestdata/chest_xray-master1/chestnet1/model_best_val.pt"
+    model_path = "/content/gdrive/My Drive/chestxray/gmic_y_global_1e-4_200_ep_100%_final_changed/model_best_val.pt"
 
-    data_path = '/home/aims/Documents/Personal_ machine_ learning/Kaggle_chestxray_data/chestdata/chest_xray-master1/chestnet1/f'
-
+    data_path = "/content/gdrive/My Drive/chestxray/images"
     parameters= {
        "device_type": "cpu",
        "gpu_number": 0,
-       "output_path":"./chestnet_results/sample0.2_images",
-       "image_path":"/home/aims/Documents/Personal_ machine_ learning/Kaggle_chestxray_data/chestdata/chest_xray-master1/chestnet1/f",
+       "output_path":"/content/gdrive/My Drive/chestxray/chestnet_results/sample_images_final_0.1_final",
+       "image_path":"/content/gdrive/My Drive/chestxray/images",
        "cam_size": (16, 16),
        "K": 4,
        "crop_shape": (256, 256),
-       "percent_t": 0.2}
+       "percent_t": 0.1}
+      
 
 
     run_single_model(model_path, data_path, parameters)
