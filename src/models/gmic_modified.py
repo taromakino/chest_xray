@@ -111,17 +111,13 @@ class GMIC(nn.Module):
                                                     method=crop_method)
         return output
 
-
     def forward(self, x_original):
         """
         :param x_original: N,H,W,C numpy matrix
         """
-        #print('x_original', x_original.shape)
         # global network: x_small -> class activation map
         h_g, self.saliency_map = self.global_network.forward(x_original)
 
-        #print('h_small', self.saliency_map.shape)
-        #print('cam_size', self.cam_size)
         # calculate y_global
         # note that y_global is not directly used in inference
         self.y_global = self.aggregation_function.forward(self.saliency_map)
@@ -150,8 +146,6 @@ class GMIC(nn.Module):
         g1, _ = torch.max(h_g, dim=2)
         global_vec, _ = torch.max(g1, dim=2)
         concat_vec = torch.cat([global_vec, z], dim=1)
-        #print(concat_vec.shape)
-        self.y_fusion = F.softmax(self.fusion_dnn(concat_vec),dim = 1)
-        #torch.sigmoid(self.fusion_dnn(concat_vec))
-        #print((self.y_fusion).shape)
+        self.y_fusion = torch.sigmoid(self.fusion_dnn(concat_vec))
+
         return self.y_fusion

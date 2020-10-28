@@ -150,10 +150,5 @@ class GMIC(nn.Module):
         # use max pooling to collapse the feature map
         g1, _ = torch.max(h_g, dim=2)
         global_vec, _ = torch.max(g1, dim=2)
-        #print('--------------->shape of global_vec', global_vec.shape)
-        concat_vec = torch.cat([global_vec, z], dim=1)
-        #self.y_fusion = F.softmax(self.fusion_dnn(concat_vec))
-        #torch.sigmoid(self.fusion_dnn(concat_vec))
 
-        #return self.y_fusion
-        return self.y_global
+        return torch.sigmoid(self.y_global)
