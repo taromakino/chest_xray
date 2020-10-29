@@ -25,7 +25,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 from src.utilities import tools
-import src.modeling.modules as m
+import src.models.modules_modified as m
 import gin
 import torch.nn.functional as F
 
