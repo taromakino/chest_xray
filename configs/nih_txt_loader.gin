@@ -4,9 +4,10 @@ CheXNet.out_size=14
 
 # Train configuration
 train.batch_size=16
-train.lr=1e-4
-train.n_epochs=100
+train.lr=0.001 
+train.n_epochs= 50
 train.optimizer='adam'
+train.scheduler = 'reduced'
 train.callbacks=['EvaluateEpoch', 'meta_saver', 'CompletedStopping', 'EarlyStopping']
 CompletedStopping.patience=5
 CompletedStopping.monitor='auc_chexnet_covid'
@@ -17,18 +18,33 @@ EvaluateEpoch.metrics=['acc_chexnet_covid', 'auc_chexnet_covid']
 ProgressionCallback.other_metrics=['acc_chexnet_covid']
 
 # Training loop
-training_loop.reload=False
+training_loop.reload=True
 training_loop.use_gpu=True
 training_loop.device_numbers=[0]
 training_loop.checkpoint_monitor='val_auc_chexnet_covid'
 
 # Dataset
 get_chexnet_covid.seed=777 # Use different seed for different instance of CV
-get_chexnet_covid.data_dir="/gpfs/data/luilab/covid/NIH/images"
-get_chexnet_covid.train_image_list_file="/gpfs/data/luilab/covid/NIH/labels/train_list.txt"
-get_chexnet_covid.val_image_list_file="/gpfs/data/luilab/covid/NIH/labels/val_list.txt"
-get_chexnet_covid.test_image_list_file="/gpfs/data/luilab/covid/NIH/labels/test_list.txt"
-get_chexnet_covid.num_workers=10
+get_chexnet_covid.data_dir="/content/gdrive/My Drive/chestxray/merged_images"
+get_chexnet_covid.train_image_list_file="/content/gdrive/My Drive/chestxray/chest_xray-master/data/labels/train_list.txt"
+get_chexnet_covid.val_image_list_file="/content/gdrive/My Drive/chestxray/chest_xray-master/data/labels/val_list.txt"
+get_chexnet_covid.test_image_list_file="/content/gdrive/My Drive/chestxray/chest_xray-master/data/labels/test_list.txt"
+get_chexnet_covid.num_workers=2
 get_chexnet_covid.train=True
 get_chexnet_covid.valid=True
-get_chexnet_covid.test=True
+get_chexnet_covid.test=False
+
+
+# Model
+#train.model='GMIC'
+#GMIC.parameters= {
+        #"device_type": "gpu",
+        #"gpu_number": 0,
+        #"max_crop_noise": (100, 100),
+        #"max_crop_size_noise": 100,
+        #"cam_size": (4, 4),
+        #"K": 6,
+        #"crop_shape": (256, 256),
+        #"percent_t": 0.1,
+        #"cam_loss_lambda":0.5,
+        #"cam_loss_l":1}
