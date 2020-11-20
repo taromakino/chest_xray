@@ -19,7 +19,7 @@ import h5py
 from contextlib import contextmanager
 from collections import defaultdict
 
-from src.callbacks.callbacks import ModelCheckpoint, LambdaCallback, History, DumpTensorboardSummaries, BaseLogger
+from src.callbacks.callbacks import ModelCheckpoint, LambdaCallback, History, BaseLogger
 from src.callbacks.progress import ProgressionCallback
 from src.utils import save_weights, layer_freezer, get_loss_function_with_nan_suppression
 
@@ -62,8 +62,8 @@ def _construct_default_callbacks(model, optimizer, H, H_batch, save_path, checkp
             save_callbacks=custom_callbacks,
             save_path=save_path)))
     
-    if use_tb:
-        callbacks.append(DumpTensorboardSummaries())
+    #if use_tb:
+        #callbacks.append(DumpTensorboardSummaries())
 
     #TODO: debug later TypeError: cannot serialize '_io.TextIOWrapper' object    
         
@@ -413,6 +413,7 @@ def _loop(
                     val_labels_list.append(y_valid.cpu().detach().numpy())
                     val_indices_list.append(x_indices.cpu().detach().numpy())
                     val['loss'] += loss_function(outputs, y_valid).item() * len(x_valid)
+                    
                     for m in metrics:
                         val[m.__name__] += float(m(outputs, y_valid)) * len(x_valid)
                 for k in val:
@@ -472,7 +473,7 @@ def _loop(
             epoch_summary_string += ', test_loss={}'.format(epoch_logs['test_loss'])
 
         if scheduler is not None:
-            scheduler.step()
+            scheduler.step( val['loss'])
         logger.info(epoch_summary_string)
 
     for c in callbacks:
