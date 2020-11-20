@@ -8,6 +8,10 @@ import os
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 import keras
 
+import sys
+sys.path.append("/content/gdrive/My Drive/chestxray/chest_xray-master/")
+
+
 import gin
 from gin.config import _CONFIG
 import torch
@@ -65,6 +69,10 @@ def train(save_path,
     if scheduler == 'cosine':
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, n_epochs)
 
+    elif scheduler == 'reduced':
+      
+      scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min')
+
     if lr_splitting_by is not None:
         optimizer, _ = create_optimizer(optimizer, model, lr_splitting_by, lrs)
 
@@ -90,7 +98,7 @@ def train(save_path,
 
     if mode == 'train':
         assert train is not None, "please provide train data"
-        assert valid is not None, "please provide validation data"
+        #assert valid is not None, "please provide validation data"
         training_loop(model=model, optimizer=optimizer, scheduler=scheduler, loss_function=loss_function,
                       metrics=[acc_chexnet_covid], train=train, valid=valid, test=test, meta_data=meta_data,
                       steps_per_epoch=steps_per_epoch, n_epochs=n_epochs, save_path=save_path, config=_CONFIG,
