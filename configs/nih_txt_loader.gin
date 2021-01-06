@@ -4,14 +4,19 @@ CheXNet.out_size=14
 
 # Train configuration
 train.batch_size=16
-train.lr=0.001 
+train.lr=0.0001
 train.n_epochs= 50
 train.optimizer='adam'
+#train.scheduler = None
 train.scheduler = 'reduced'
+train.pretrained_model_name  = 'model_best_val.pt'
+train.save_path = '/content/gdrive/MyDrive/chestxray/Turn_around_encounter_final_in_Jesus_Name_0.0001'
+
+
 train.callbacks=['EvaluateEpoch', 'meta_saver', 'CompletedStopping', 'EarlyStopping']
 CompletedStopping.patience=5
 CompletedStopping.monitor='auc_chexnet_covid'
-EarlyStopping.patience=20
+EarlyStopping.patience=30
 EarlyStopping.monitor='val_auc_chexnet_covid'
 EarlyStopping.mode='max'
 EvaluateEpoch.metrics=['acc_chexnet_covid', 'auc_chexnet_covid']
@@ -19,12 +24,21 @@ ProgressionCallback.other_metrics=['acc_chexnet_covid']
 
 # Training loop
 training_loop.reload=True
+
 training_loop.use_gpu=True
 training_loop.device_numbers=[0]
 training_loop.checkpoint_monitor='val_auc_chexnet_covid'
 
+#Evaluation loop
+
+evaluation_loop.use_gpu = True
+
+#evaluation_loop.save_path = '/content/gdrive/MyDrive/chestxray/Turn_around_encounter_final_in_Jesus_Name_0.0001'
+
+
+
 # Dataset
-get_chexnet_covid.seed=777 # Use different seed for different instance of CV
+get_chexnet_covid.seed=1020 # 777 Use different seed for different instance of CV
 get_chexnet_covid.data_dir="/content/gdrive/My Drive/chestxray/merged_images"
 get_chexnet_covid.train_image_list_file="/content/gdrive/My Drive/chestxray/chest_xray-master/data/labels/train_list.txt"
 get_chexnet_covid.val_image_list_file="/content/gdrive/My Drive/chestxray/chest_xray-master/data/labels/val_list.txt"
