@@ -205,7 +205,9 @@ def _append_to_history_csv(epoch, logs, H):
             pass
 
 def _load_pretrained_model(model, save_path, model_to_load='model_best_val.pt'):
+    print('ppppppppp',os.path.join(save_path, model_to_load))
     checkpoint = torch.load(os.path.join(save_path, model_to_load))
+    
     model.load_state_dict(checkpoint['model'])
     logger.info("Done reloading!")
 
@@ -413,7 +415,6 @@ def _loop(
                     val_labels_list.append(y_valid.cpu().detach().numpy())
                     val_indices_list.append(x_indices.cpu().detach().numpy())
                     val['loss'] += loss_function(outputs, y_valid).item() * len(x_valid)
-                    
                     for m in metrics:
                         val[m.__name__] += float(m(outputs, y_valid)) * len(x_valid)
                 for k in val:
@@ -441,6 +442,7 @@ def _loop(
                     x_test, y_test = x_test.to(device), y_test.to(device)
                     seen += batch_size
                     outputs = model(x_test)
+                    
                     if is_n_crop:
                         outputs = outputs.view(batch_size, num_crops, -1).mean(1)
                     test_predictions_list.append(outputs.cpu().detach().numpy())
@@ -473,7 +475,7 @@ def _loop(
             epoch_summary_string += ', test_loss={}'.format(epoch_logs['test_loss'])
 
         if scheduler is not None:
-            scheduler.step( val['loss'])
+            scheduler.step(val['loss']) #val['loss']
         logger.info(epoch_summary_string)
 
     for c in callbacks:
@@ -601,7 +603,7 @@ def _construct_default_eval_callbacks(H, H_batch, save_path,
     return callbacks
 
 @gin.configurable
-def evaluation_loop(model, loss_function, metrics, optimizer, 
+def evaluation_loop(model, loss_function, metrics, optimizer, scheduler,
                    meta_data, config, 
                    save_path, pretrained_model_name,
                    test=None,  test_steps=None,
@@ -618,6 +620,7 @@ def evaluation_loop(model, loss_function, metrics, optimizer,
     callbacks = [BaseLogger()] + list(custom_callbacks)
     
     _load_pretrained_model(model, save_path, pretrained_model_name)
+
 
     history_csv_path, history_pkl_path = os.path.join(save_path, "eval_history.csv"), \
         os.path.join(save_path, "eval_history.pkl")
@@ -653,7 +656,7 @@ def evaluation_loop(model, loss_function, metrics, optimizer,
         model.to(base_device)
 
     _loop(
-        model, test, None, None, None, loss_function, 
+        model, test, None, None, None, loss_function = loss_function, scheduler=scheduler,
         initial_epoch=epoch_start,
         epochs=n_epochs,
         callbacks=callbacks,
