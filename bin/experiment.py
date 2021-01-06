@@ -38,6 +38,7 @@ def train(save_path,
           optimizer='sgd',
           scheduler=None,
           freeze_all_but_this_layer=None,
+          pretrained_model_name = None,
           mode='train'):
     # Create dynamically dataset generators
     train, valid, test, meta_data = get_chexnet_covid(batch_size=batch_size)
@@ -71,7 +72,7 @@ def train(save_path,
 
     elif scheduler == 'reduced':
       
-      scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min')
+      scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min',factor=0.1,  patience=10)
 
     if lr_splitting_by is not None:
         optimizer, _ = create_optimizer(optimizer, model, lr_splitting_by, lrs)
@@ -108,8 +109,9 @@ def train(save_path,
                       )
     else:
         assert test is not None, "please provide test data for evaluation"
-        evaluation_loop(model=model, optimizer=optimizer, loss_function=loss_function, metrics=[acc_chexnet_covid],
+        evaluation_loop(model=model, optimizer=optimizer,scheduler=scheduler, loss_function=loss_function, metrics=[acc_chexnet_covid],
                       test=test, meta_data=meta_data,
+                      pretrained_model_name  = pretrained_model_name, 
                       save_path=save_path, config=_CONFIG,
                       custom_callbacks=callbacks_constructed,
                       target_indice=target_indice,
